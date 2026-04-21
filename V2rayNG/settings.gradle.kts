@@ -1,3 +1,19 @@
+import java.util.Properties
+
+val localPropertiesFile = File(rootDir, "local.properties")
+if (!localPropertiesFile.exists()) {
+    val sdkDirFromEnv = sequenceOf("ANDROID_HOME", "ANDROID_SDK_ROOT")
+        .mapNotNull { System.getenv(it)?.takeIf(String::isNotBlank) }
+        .firstOrNull()
+
+    if (sdkDirFromEnv != null) {
+        val properties = Properties().apply {
+            setProperty("sdk.dir", sdkDirFromEnv)
+        }
+        localPropertiesFile.outputStream().use { properties.store(it, null) }
+    }
+}
+
 pluginManagement {
     repositories {
         google {
